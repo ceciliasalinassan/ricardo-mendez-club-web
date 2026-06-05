@@ -1,0 +1,21 @@
+# Cómo activar Supabase en la web
+
+1. Entra a https://supabase.com y crea un proyecto.
+2. En Supabase, abre SQL Editor.
+3. Copia y ejecuta completo el archivo `supabase_setup.sql`.
+4. Ve a Project Settings → API.
+5. Copia:
+   - Project URL
+   - anon public key
+6. Sube esta carpeta a GitHub y despliega en Vercel.
+7. Abre la web → Panel Admin → Supabase.
+8. Pega URL y anon key.
+9. Presiona “Guardar conexión Supabase”.
+10. Presiona “Subir datos actuales a Supabase”.
+
+Desde ese momento:
+- Noticias, fotos, videos, fixture, presidentes, auspiciadores, tablas y resultados quedan online.
+- Las imágenes se guardan en Supabase Storage bucket `club-assets`.
+- Si abres desde otro computador/celular, la web cargará la información desde Supabase.
+
+Clave admin demo: admin1932

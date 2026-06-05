@@ -1,0 +1,244 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Club Deportivo Ricardo Méndez</title>
+  <link rel="manifest" href="manifest.json" />
+  <meta name="theme-color" content="#020307" />
+  <link rel="stylesheet" href="styles.css" />
+</head>
+<body>
+  <div class="real-stadium-bg"></div>
+  <div class="real-players-bg"></div>
+  <div class="real-fireworks-bg"></div>
+  <div class="smoke-layer"></div>
+  <div class="led-lines"></div>
+  <div class="blue-orbit"></div>
+  <div class="gold-particles"></div>
+
+  <aside class="side-nav">
+    <img src="logo_ricardo_mendez.png" class="club-mark" alt="Ricardo Méndez" />
+    <a href="#inicio"><b>🏠</b><span>Inicio</span></a>
+    <a href="#historia"><b>★</b><span>Historia</span></a>
+    <a href="#resultados"><b>⚽</b><span>Resultados</span></a>
+    <a href="#ranking"><b>🏆</b><span>Ranking</span></a>
+    <a href="#noticias"><b>📰</b><span>Noticias</span></a>
+    <a href="#galeria"><b>📸</b><span>Media</span></a>
+    <a href="#posiciones"><b>📊</b><span>Tabla</span></a>
+    <a href="#palmares"><b>🥇</b><span>Palmarés</span></a>
+    <a href="admin.html"><b>⚙️</b><span>Admin</span></a>
+  </aside>
+
+  <main class="page">
+    <section id="inicio" class="hero">
+      <header class="topbar">
+        <div>
+          <strong id="siteClubName">Club Deportivo Ricardo Méndez</strong>
+          <span>Portal oficial · San Carlos</span>
+        </div>
+        <nav>
+          <a href="#resultados">Resultados</a>
+          <a href="#ranking">Ranking</a>
+          <a href="#posiciones">Posiciones</a>
+          <a href="#palmares">Palmarés</a>
+          <a class="social-mini" id="instagramTop" href="https://www.instagram.com/cd_ricardomendez_sancarlos" target="_blank">📸 Instagram</a>
+          <a class="social-mini" id="facebookTop" href="https://www.facebook.com/RICARDOMENDEZSANCARLOS" target="_blank">📘 Facebook</a>
+          <a class="admin-link-top" href="admin.html">Panel Admin</a>
+        </nav>
+      </header>
+
+      <section class="top-sponsors">
+        <div class="top-sponsors-title">Auspiciadores oficiales</div>
+        <div class="top-sponsor-carousel"><div id="topSponsorGrid" class="top-sponsor-grid"></div></div>
+      </section>
+
+      <div class="hero-grid">
+        <div class="hero-copy">
+          <span class="tag">Premium Football · Negro · Dorado · Azul eléctrico</span>
+          <h1 id="mainTitle">Ricardo Méndez</h1>
+          <p id="mainSubtitle" class="subtitle">Más que un club, una familia.</p>
+          <p id="mainDescription" class="lead">Web pública profesional con administración privada para noticias, socios, fixture, puntajes, fotos, videos, auspiciadores e historia institucional.</p>
+          <div class="hero-actions">
+            <a href="#resultados" class="btn btn-gold">Últimos resultados</a>
+            <a href="#socios" class="btn btn-blue">Hazte socio</a>
+          </div>
+        </div>
+
+        <div class="badge-stage premium-badge">
+          <div class="rotating-ring"></div>
+          <div class="shield-shine"></div>
+          <img src="logo_ricardo_mendez.png" alt="Escudo Ricardo Méndez" />
+        </div>
+
+        <article class="next-card match-pro">
+          <small>🔥 Partido destacado</small>
+          <div class="versus versus-pro">
+            <div class="team-block">
+              <img class="team-logo rm-logo-solid" src="logo_ricardo_mendez.png" alt="Ricardo Méndez">
+              <span id="homeTeamName">Ricardo Méndez</span>
+            </div>
+            <b>VS</b>
+            <div class="team-block">
+              <img id="rivalLogoPublic" class="team-logo rival-logo" alt="Club rival">
+              <span id="rivalNamePublic">Club Rival</span>
+            </div>
+          </div>
+          <div class="match-info">
+            <p id="nextMatchPublic">Sábado 25 Mayo · 15:00 hrs</p>
+            <p id="nextPlacePublic">Cancha por confirmar</p>
+          </div>
+        </article>
+      </div>
+    </section>
+
+    <section class="metrics">
+      <article><span>Series</span><b id="metricSeries" data-count="11">0</b></article>
+      <article><span>Socios activos</span><b id="metricSocios" data-count="246">0</b></article>
+      <article><span>Años de historia</span><b id="metricYears" data-count="94">0</b></article>
+      <article><span>Campeonatos</span><b id="metricTitles" data-count="0">0</b></article>
+      <article><span>Auspiciadores</span><b id="metricSponsors" data-count="0">0</b></article>
+      <article><span>Aniversario</span><b id="metricAnniversary">12/08</b></article>
+    </section>
+
+    <section id="resultados" class="section">
+      <div class="section-head"><h2>Centro de resultados</h2><p>Últimos partidos oficiales del club.</p></div>
+      <div id="resultsGrid" class="results-grid"></div>
+    </section>
+
+    <section id="ranking" class="section">
+      <div class="section-head"><h2>Ranking general del club</h2><p>Rendimiento acumulado por serie.</p></div>
+      <div class="ranking-card">
+        <div id="rankingRows" class="ranking-rows"></div>
+        <div class="ranking-total">Puntaje general del club: <strong id="rankingTotal">0 pts</strong></div>
+      </div>
+    </section>
+
+    <section id="orgullo-rimen" class="section">
+      <div class="section-head"><h2>Orgullo Rimen</h2><p>Mejores ubicaciones actuales de Ricardo Méndez por serie.</p></div>
+      <div id="prideGrid" class="pride-grid"></div>
+    </section>
+
+    <section id="historia" class="section">
+      <div class="section-head"><h2>Historia del club</h2><p>Identidad, tradición y presente institucional.</p></div>
+      <div class="history-grid">
+        <article><h3>Cómo fue creado</h3><img id="historyPhotoPublic" class="history-photo" alt="Historia del club"><p id="clubHistory"></p></article>
+        <article><span>Presidente actual</span><h3 id="clubPresident"></h3><p>Dato institucional actualizado por administración.</p></article>
+      </div>
+    </section>
+
+    <section id="timeline" class="section">
+      <div class="section-head"><h2>Línea de tiempo</h2><p>Momentos importantes desde 1932.</p></div>
+      <div id="timelineGrid" class="timeline-grid"></div>
+    </section>
+
+    <section id="directiva" class="section">
+      <div class="section-head"><h2>Directiva</h2><p>Equipo dirigencial del Club Deportivo Ricardo Méndez.</p></div>
+      <div id="directivaGrid" class="directiva-grid"></div>
+    </section>
+
+    <section id="presidentes" class="section">
+      <div class="section-head"><h2>Galería de presidentes</h2><p>Registro histórico de presidentes del club.</p></div>
+      <div id="presidentsGrid" class="presidents-grid"></div>
+    </section>
+
+    <section id="palmares" class="section">
+      <div class="section-head"><h2>Palmarés histórico</h2><p>Campeonatos, copas y reconocimientos.</p></div>
+      <div id="palmaresGrid" class="palmares-grid"></div>
+    </section>
+
+    <section id="aniversario" class="section">
+      <div class="anniversary">
+        <div><span>Aniversario oficial</span><h2 id="anniversaryText">12/08/2026</h2><p>Fecha destacada del Club Deportivo Ricardo Méndez.</p></div>
+        <img src="logo_ricardo_mendez.png" alt="Escudo">
+      </div>
+    </section>
+
+    <section id="series" class="section">
+      <div class="section-head"><h2>Series en competencia</h2><p>Selecciona una serie para ver sus puntajes.</p></div>
+      <div class="series-cloud"><button class="serie-pill" data-serie="SERIE PEQUES">SERIE PEQUES</button>
+<button class="serie-pill" data-serie="SERIE SEGUNDA INFANTIL">SERIE SEGUNDA INFANTIL</button>
+<button class="serie-pill" data-serie="SERIE PRIMERA INFANTIL">SERIE PRIMERA INFANTIL</button>
+<button class="serie-pill" data-serie="SERIE JUVENILES">SERIE JUVENILES</button>
+<button class="serie-pill" data-serie="SERIE ORO">SERIE ORO</button>
+<button class="serie-pill" data-serie="SERIE SUPER SENIOR">SERIE SUPER SENIOR</button>
+<button class="serie-pill" data-serie="SERIE SENIOR">SERIE SENIOR</button>
+<button class="serie-pill" data-serie="SERIE SEGUNDA ADULTOS">SERIE SEGUNDA ADULTOS</button>
+<button class="serie-pill" data-serie="SERIE PRIMERA ADULTOS">SERIE PRIMERA ADULTOS</button>
+<button class="serie-pill" data-serie="SERIE PLATINOS">SERIE PLATINOS</button>
+<button class="serie-pill" data-serie="SERIE HONOR">SERIE HONOR</button></div>
+    </section>
+
+    <section id="noticias" class="section">
+      <div class="section-head"><h2>Noticias destacadas</h2><p>Publicaciones oficiales del club con imagen.</p></div>
+      <div id="newsGrid" class="cards news-pro"></div>
+    </section>
+
+    <section id="galeria" class="section">
+      <div class="section-head"><h2>Galería profesional</h2><p>Fotos, videos, partidos, celebraciones y premiaciones.</p></div>
+      <div id="galleryGrid" class="gallery"></div>
+    </section>
+
+    <section id="fixture" class="section">
+      <div class="section-head"><h2>Fixture general del club</h2><p>Programación oficial ANFA cargada como imagen.</p></div>
+      <div id="fixtureImageGrid" class="fixture-image-grid"></div>
+    </section>
+
+    <section id="posiciones" class="section">
+      <div class="section-head"><h2>Tabla de posiciones</h2><p>Vista pública sin botones de carga.</p></div>
+      <div class="public-tools"><select id="standingSerieSelect"><option value="SERIE PEQUES">SERIE PEQUES</option>
+<option value="SERIE SEGUNDA INFANTIL">SERIE SEGUNDA INFANTIL</option>
+<option value="SERIE PRIMERA INFANTIL">SERIE PRIMERA INFANTIL</option>
+<option value="SERIE JUVENILES">SERIE JUVENILES</option>
+<option value="SERIE ORO">SERIE ORO</option>
+<option value="SERIE SUPER SENIOR">SERIE SUPER SENIOR</option>
+<option value="SERIE SENIOR">SERIE SENIOR</option>
+<option value="SERIE SEGUNDA ADULTOS">SERIE SEGUNDA ADULTOS</option>
+<option value="SERIE PRIMERA ADULTOS">SERIE PRIMERA ADULTOS</option>
+<option value="SERIE PLATINOS">SERIE PLATINOS</option>
+<option value="SERIE HONOR">SERIE HONOR</option></select></div>
+      <div class="table-wrap"><table><thead><tr><th>Pos.</th><th>Equipo</th><th>PJ</th><th>PG</th><th>PE</th><th>PP</th><th>GF</th><th>GC</th><th>DG</th><th>PTS</th></tr></thead><tbody id="standingRows"></tbody></table></div>
+    </section>
+
+    <section id="grafico-series" class="section">
+      <div class="section-head"><h2>Gráfico futurista por series</h2><p>Puntaje del Club Ricardo Méndez por cada serie.</p></div>
+      <div class="score-chart-card">
+        <div class="chart-header"><span>Rendimiento por serie</span><strong id="chartTotalPoints">0 pts</strong></div>
+        <div id="seriesScoreChart" class="series-score-chart"></div>
+      </div>
+    </section>
+
+    <section id="acumulativa" class="section">
+      <div class="section-head"><h2>Tabla acumulativa general</h2><p>Suma todos los puntos ganados en todas las series.</p></div>
+      <div class="table-wrap"><table><thead><tr><th>Pos.</th><th>Club</th><th>PJ</th><th>PG</th><th>PE</th><th>PP</th><th>GF</th><th>GC</th><th>DG</th><th>PTS Total</th></tr></thead><tbody id="cumulativeRows"></tbody></table></div>
+    </section>
+
+    <section id="socios" class="section split">
+      <div>
+        <div class="section-head"><h2>Solicitud nuevo socio</h2><p>Al enviar, se abrirá WhatsApp para notificar al administrador.</p></div>
+        <form id="memberRequestForm" class="form-card">
+          <input id="memberName" placeholder="Nombre completo" required>
+          <input id="memberRut" placeholder="RUT" required>
+          <input id="memberPhone" placeholder="Teléfono" required>
+          <select id="memberType"><option>Socio activo</option><option>Jugador</option><option>Apoderado</option><option>Dirigente</option></select>
+          <button>🟢 Enviar solicitud por WhatsApp</button>
+        </form>
+      </div>
+      <div class="info-card">
+        <h3>Redes oficiales</h3>
+        <p>Sigue al club y contacta directamente por nuestras redes.</p>
+        <div class="social-box">
+          <a class="wa" id="whatsappPublic" href="https://wa.me/56994413797" target="_blank">🟢 WhatsApp</a>
+          <a class="ig" id="instagramPublic" href="https://www.instagram.com/cd_ricardomendez_sancarlos" target="_blank">📸 Instagram</a>
+          <a class="fb" id="facebookPublic" href="https://www.facebook.com/RICARDOMENDEZSANCARLOS" target="_blank">📘 Facebook</a>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <script src="script.js"></script>
+  <script>if ('serviceWorker' in navigator) navigator.serviceWorker.register('./service-worker.js');</script>
+
+</body>
+</html>
