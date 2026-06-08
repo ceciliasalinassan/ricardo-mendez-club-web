@@ -1254,3 +1254,16 @@ img[alt]{
 .admin-body #adminPanel{
   display:block!important;
 }
+
+/* V31: mejoras visuales para carga de imágenes */
+.fixture-image-grid img,
+.presidents-grid img,
+.history-photo,
+.gallery img,
+.news-pro .thumb{
+  background:rgba(0,0,0,.35);
+}
+.admin-page input[type="file"]{
+  border:1px dashed rgba(0,187,255,.45)!important;
+  background:rgba(0,187,255,.06)!important;
+}

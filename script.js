@@ -1277,6 +1277,62 @@ function getData(){try{const raw=localStorage.getItem(DATA_KEY); const d=mergeDa
 function saveData(d){localStorage.setItem(DATA_KEY,JSON.stringify(mergeData(d)))}
 function fileToDataURL(file){return new Promise((res,rej)=>{const r=new FileReader(); r.onload=()=>res(r.result); r.onerror=rej; r.readAsDataURL(file)})}
 
+async function compressImageFile(file, maxSize=1400, quality=.82){
+  if(!file || !file.type || !file.type.startsWith('image/')) return await fileToDataURL(file);
+  const original = await fileToDataURL(file);
+  return new Promise(resolve=>{
+    const img = new Image();
+    img.onload = ()=>{
+      let w = img.width, h = img.height;
+      const scale = Math.min(maxSize / w, maxSize / h, 1);
+      w = Math.round(w * scale);
+      h = Math.round(h * scale);
+      const canvas = document.createElement('canvas');
+      canvas.width = w;
+      canvas.height = h;
+      const ctx = canvas.getContext('2d');
+      ctx.drawImage(img,0,0,w,h);
+      resolve(canvas.toDataURL('image/jpeg', quality));
+    };
+    img.onerror = ()=>resolve(original);
+    img.src = original;
+  });
+}
+
+function dataURLtoBlob(dataurl){
+  const arr = dataurl.split(',');
+  const mime = (arr[0].match(/:(.*?);/)||[])[1] || 'image/jpeg';
+  const bstr = atob(arr[1]);
+  let n = bstr.length;
+  const u8arr = new Uint8Array(n);
+  while(n--) u8arr[n] = bstr.charCodeAt(n);
+  return new Blob([u8arr], {type:mime});
+}
+
+async function uploadImageSmart(file, folder='uploads'){
+  const compressed = await compressImageFile(file, 1600, .84);
+
+  // Si Supabase no está conectado, queda respaldo local comprimido.
+  if(!supabaseOnline || !supabaseClient) return compressed;
+
+  try{
+    const blob = dataURLtoBlob(compressed);
+    const safeName = `${folder}/${Date.now()}-${Math.random().toString(36).slice(2)}.jpg`;
+    const { error } = await supabaseClient.storage.from(SUPABASE_BUCKET).upload(safeName, blob, {
+      contentType: 'image/jpeg',
+      cacheControl: '3600',
+      upsert: false
+    });
+    if(error) throw error;
+    const { data } = supabaseClient.storage.from(SUPABASE_BUCKET).getPublicUrl(safeName);
+    return data.publicUrl;
+  }catch(e){
+    console.warn('No se pudo subir imagen a Supabase. Se usará respaldo local:', e.message);
+    return compressed;
+  }
+}
+
+
 async function imageFileToTransparentDataURL(file){const original=await fileToDataURL(file); return new Promise(resolve=>{const img=new Image(); img.onload=()=>{const max=1100; let w=img.width,h=img.height,scale=Math.min(max/w,max/h,1); w=Math.round(w*scale); h=Math.round(h*scale); const canvas=document.createElement('canvas'); canvas.width=w; canvas.height=h; const ctx=canvas.getContext('2d',{willReadFrequently:true}); ctx.drawImage(img,0,0,w,h); removeBackgroundByEdges(canvas); const trimmed=trimTransparentCanvas(canvas); resolve(centerOnTransparentCanvas(trimmed,420,420,.94).toDataURL('image/png'))}; img.onerror=()=>resolve(original); img.src=original})}
 function removeBackgroundByEdges(canvas){const ctx=canvas.getContext('2d',{willReadFrequently:true}),w=canvas.width,h=canvas.height,img=ctx.getImageData(0,0,w,h),data=img.data,visited=new Uint8Array(w*h),q=[]; const idx=(x,y)=>y*w+x; const isBg=(x,y)=>{const i=idx(x,y)*4,r=data[i],g=data[i+1],b=data[i+2],a=data[i+3],max=Math.max(r,g,b),min=Math.min(r,g,b); return a<18||(r>188&&g>188&&b>188&&(max-min)<82)||(r>225&&g>225&&b>225)||((r+g+b)/3>218&&(max-min)<95)}; for(let x=0;x<w;x++)q.push([x,0],[x,h-1]); for(let y=0;y<h;y++)q.push([0,y],[w-1,y]); while(q.length){const [x,y]=q.pop(); if(x<0||y<0||x>=w||y>=h)continue; const id=idx(x,y); if(visited[id])continue; visited[id]=1; if(!isBg(x,y))continue; data[id*4+3]=0; q.push([x+1,y],[x-1,y],[x,y+1],[x,y-1])} ctx.putImageData(img,0,0)}
 function trimTransparentCanvas(canvas){const ctx=canvas.getContext('2d',{willReadFrequently:true}),w=canvas.width,h=canvas.height,data=ctx.getImageData(0,0,w,h).data; let top=h,left=w,right=0,bottom=0; for(let y=0;y<h;y++)for(let x=0;x<w;x++){const a=data[(y*w+x)*4+3]; if(a>12){if(x<left)left=x;if(x>right)right=x;if(y<top)top=y;if(y>bottom)bottom=y}} if(right<=left||bottom<=top)return canvas; const pad=24; left=Math.max(0,left-pad); top=Math.max(0,top-pad); right=Math.min(w,right+pad); bottom=Math.min(h,bottom+pad); const out=document.createElement('canvas'); out.width=right-left; out.height=bottom-top; out.getContext('2d').drawImage(canvas,left,top,out.width,out.height,0,0,out.width,out.height); return out}
@@ -1350,37 +1406,39 @@ function setup(){$('standingSerieSelect')?.addEventListener('change',renderStand
   d.history=historyInput.value;
   d.president=presidentInput.value;
   let photo=historyPhotoUrl.value;
-  if(historyPhotoFile.files[0]) photo=await uploadAsset(historyPhotoFile.files[0], 'history');
+  if(historyPhotoFile.files[0]) photo=await uploadImageSmart(historyPhotoFile.files[0], 'history');
   d.historyPhoto=photo||'';
-  await onlineSave(d); render(); alert('Historia actualizada.');
+  await onlineSave(d); render(); alert('Historia actualizada con fotografía.');
 });
  $('addDirectiva')?.addEventListener('click',async()=>{const d=getData(); d.directiva.push({role:dirRole.value,name:dirName.value}); await onlineSave(d); dirRole.value=dirName.value=''; render()});
  $('addPresidentGallery')?.addEventListener('click',async()=>{
   const d=getData();
   let image=presidentGalleryUrl.value;
-  if(presidentGalleryFile.files[0]) image=await uploadAsset(presidentGalleryFile.files[0], 'presidents');
+  if(presidentGalleryFile.files[0]) image=await uploadImageSmart(presidentGalleryFile.files[0], 'presidents');
   if(!presidentGalleryName.value||!image) return alert('Agrega nombre y fotografía.');
   d.presidents.push({name:presidentGalleryName.value,period:presidentGalleryPeriod.value,image});
   await onlineSave(d);
   presidentGalleryName.value=presidentGalleryPeriod.value=presidentGalleryUrl.value='';
   presidentGalleryFile.value='';
   render();
+  alert('Presidente cargado correctamente.');
 });
  $('addPalmares')?.addEventListener('click',async()=>{const d=getData(); d.palmares.push({year:palYear.value,title:palTitle.value}); d.metrics.titles=String(d.palmares.length); await onlineSave(d); palYear.value=palTitle.value=''; render()});
  $('addTimeline')?.addEventListener('click',async()=>{const d=getData(); d.timeline.push({year:timeYear.value,text:timeText.value}); await onlineSave(d); timeYear.value=timeText.value=''; render()});
  $('addResult')?.addEventListener('click',async()=>{const d=getData(); d.results.unshift({date:resDate.value,match:resMatch.value,score:resScore.value,scorers:resScorers.value}); await onlineSave(d); resDate.value=resMatch.value=resScore.value=resScorers.value=''; render()});
- $('addNews')?.addEventListener('click',async()=>{if(!newsTitle.value||!newsText.value)return alert('Completa los datos.'); const d=getData(); let image=newsImageUrl.value; if(newsImageFile.files[0])image=await uploadAsset(newsImageFile.files[0], 'news'); d.news.unshift({title:newsTitle.value,text:newsText.value,date:new Date().toLocaleDateString('es-CL'),image}); await onlineSave(d); newsTitle.value=newsText.value=newsImageUrl.value=''; newsImageFile.value=''; render()});
- $('addMedia')?.addEventListener('click',async()=>{if(!mediaTitle.value)return alert('Agrega título.'); let url=mediaUrl.value,type=mediaType.value; if(mediaFile.files[0]){url=await uploadAsset(mediaFile.files[0], 'gallery'); type=mediaFile.files[0].type.startsWith('video')?'Video':'Foto'} if(!url)return alert('Adjunta archivo o pega URL.'); const d=getData(); d.media.unshift({title:mediaTitle.value,type,url}); await onlineSave(d); mediaTitle.value=mediaUrl.value=''; mediaFile.value=''; render()});
+ $('addNews')?.addEventListener('click',async()=>{if(!newsTitle.value||!newsText.value)return alert('Completa los datos.'); const d=getData(); let image=newsImageUrl.value; if(newsImageFile.files[0])image=await uploadImageSmart(newsImageFile.files[0], 'news'); d.news.unshift({title:newsTitle.value,text:newsText.value,date:new Date().toLocaleDateString('es-CL'),image}); await onlineSave(d); newsTitle.value=newsText.value=newsImageUrl.value=''; newsImageFile.value=''; render()});
+ $('addMedia')?.addEventListener('click',async()=>{if(!mediaTitle.value)return alert('Agrega título.'); let url=mediaUrl.value,type=mediaType.value; if(mediaFile.files[0]){url=await uploadImageSmart(mediaFile.files[0], 'gallery'); type=mediaFile.files[0].type.startsWith('video')?'Video':'Foto'} if(!url)return alert('Adjunta archivo o pega URL.'); const d=getData(); d.media.unshift({title:mediaTitle.value,type,url}); await onlineSave(d); mediaTitle.value=mediaUrl.value=''; mediaFile.value=''; render()});
  $('addFixtureImage')?.addEventListener('click',async()=>{
   const d=getData();
   let image=fixtureImageUrl.value;
-  if(fixtureImageFile.files[0]) image=await uploadAsset(fixtureImageFile.files[0], 'fixture');
+  if(fixtureImageFile.files[0]) image=await uploadImageSmart(fixtureImageFile.files[0], 'fixture');
   if(!fixtureImageTitle.value||!image) return alert('Agrega título e imagen del fixture.');
   d.fixtureImages.unshift({title:fixtureImageTitle.value,image});
   await onlineSave(d);
   fixtureImageTitle.value=fixtureImageUrl.value='';
   fixtureImageFile.value='';
   render();
+  alert('Imagen de fixture cargada correctamente.');
 });
  $('addPosition')?.addEventListener('click',async()=>{const d=getData(); if(!d.standings[posSerie.value])d.standings[posSerie.value]=[]; d.standings[posSerie.value].push({team:posTeam.value,pj:posPJ.value||0,pg:posPG.value||0,pe:posPE.value||0,pp:posPP.value||0,gf:0,gc:0,dg:posDG.value||'0',pts:posPTS.value||0}); await onlineSave(d); [posTeam,posPJ,posPG,posPE,posPP,posDG,posPTS].forEach(i=>i.value=''); standingSerieSelect.value=posSerie.value; render()});
  $('importCsv')?.addEventListener('click',async()=>{if(!positionsCsv.files[0])return alert('Adjunta CSV.'); const text=await positionsCsv.files[0].text(),d=getData(); text.split(/\r?\n/).slice(1).forEach(line=>{if(!line.trim())return; const [serie,equipo,pj,pg,pe,pp,dg,pts]=line.split(',').map(x=>x?.trim()); if(!serie||!equipo)return; if(!d.standings[serie])d.standings[serie]=[]; d.standings[serie].push({team:equipo,pj:pj||0,pg:pg||0,pe:pe||0,pp:pp||0,gf:0,gc:0,dg:dg||'0',pts:pts||0})}); await onlineSave(d); render()});

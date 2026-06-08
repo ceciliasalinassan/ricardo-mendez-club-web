@@ -1,10 +1,15 @@
-# Club Deportivo Ricardo Méndez V30
+# Club Deportivo Ricardo Méndez V31
 
-Cambio:
-- El administrador ya no solicita clave.
-- Al abrir `admin.html`, entra directo al panel administrador.
-- Se mantiene Supabase, fixture por imágenes, tablas oficiales, presidentes, historia con foto y limpieza de caché.
+Corrección:
+- Carga de imágenes reforzada.
+- Las imágenes se comprimen automáticamente.
+- Si Supabase está conectado, se suben al bucket `club-assets`.
+- Si Supabase falla o no está conectado, quedan guardadas localmente como respaldo.
+- Se agregan mensajes de éxito al cargar fixture, historia y presidentes.
+- Se mantiene admin sin clave.
 
-Importante:
-- Como no hay clave, no publiques el enlace del admin a personas no autorizadas.
-- URL del admin: /admin.html
+IMPORTANTE:
+En Admin → Supabase:
+1. Project URL: https://xzcbdyabzgwfoylipgco.supabase.co
+2. Publishable Key: solo la key pública.
+Nunca usar Secret Key.
