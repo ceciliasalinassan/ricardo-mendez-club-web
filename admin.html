@@ -4,7 +4,7 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Admin - Club Deportivo Ricardo Méndez</title>
-  <link rel="stylesheet" href="styles.css" />
+  <link rel="stylesheet" href="styles.css?v=29" />
 </head>
 <body class="admin-body">
   <div class="real-stadium-bg"></div>
@@ -16,14 +16,9 @@
   <main class="admin-page"><div id="adminModal" class="admin-page-wrap">
     <div class="modal-box">
       <a class="close admin-back" href="index.html">← Volver a la web</a>
-      <div id="loginPanel">
-        <h2>Acceso administrador</h2>
-        <p>Clave demo: <b>admin1932</b></p>
-        <input id="adminPassword" type="password" placeholder="Clave administrador">
-        <button id="loginBtn">Ingresar</button>
-      </div>
+      <div id="loginPanel" class="hidden" style="display:none!important;"></div>
 
-      <div id="adminPanel" class="hidden">
+      <div id="adminPanel">
         <h2>Panel administrador total</h2>
         <div class="admin-tabs">
           <button class="tab active" data-tab="tabSupabase">Supabase</button><button class="tab" data-tab="tabGeneral">General</button>
@@ -43,9 +38,9 @@
 
         <section id="tabSupabase" class="tab-content">
           <h3>Conexión Supabase</h3>
-          <p class="hint">Pega aquí los datos de tu proyecto Supabase. Esto permite guardar todo online.</p>
-          <input id="supabaseUrlInput" placeholder="SUPABASE URL. Ej: https://xxxxx.supabase.co">
-          <input id="supabaseAnonInput" placeholder="SUPABASE ANON KEY">
+          <p class="hint">Pega la Project URL y la Publishable Key. No uses la Secret Key en la web.</p>
+          <label class="admin-label">Project URL</label><input id="supabaseUrlInput" placeholder="Ej: https://xzcbdyabzgwfoylipgco.supabase.co">
+          <label class="admin-label">Publishable Key / anon public key</label><input id="supabaseAnonInput" placeholder="Pega aquí SOLO la publishable key. Nunca la secret key.">
           <button id="saveSupabaseConfig">Guardar conexión Supabase</button>
           <button id="syncToSupabase">Subir datos actuales a Supabase</button>
           <button id="loadFromSupabase">Cargar datos desde Supabase</button>
@@ -135,37 +130,45 @@
   
 
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-  <script src="script.js"></script>
+  <script src="script.js?v=29"></script>
   <script>
     document.addEventListener('DOMContentLoaded', function(){
       const modal = document.getElementById('adminModal');
+      const loginPanel = document.getElementById('loginPanel');
+      const adminPanel = document.getElementById('adminPanel');
+
       if(modal){
         modal.classList.add('show');
         modal.style.display = 'block';
       }
-      const loginBtn = document.getElementById('loginBtn');
-      const pass = document.getElementById('adminPassword');
-      const loginPanel = document.getElementById('loginPanel');
-      const adminPanel = document.getElementById('adminPanel');
-
-      function login(){
-        if(!pass || !loginPanel || !adminPanel) return;
-        if(pass.value !== 'admin1932'){
-          alert('Clave incorrecta');
-          return;
-        }
+      if(loginPanel){
         loginPanel.classList.add('hidden');
+        loginPanel.style.display = 'none';
+      }
+      if(adminPanel){
         adminPanel.classList.remove('hidden');
-        try {
-          if(typeof loadAdminFields === 'function') loadAdminFields();
-        } catch(e) {
-          console.warn(e);
-        }
       }
 
-      if(loginBtn) loginBtn.onclick = function(e){ e.preventDefault(); login(); };
-      if(pass) pass.addEventListener('keydown', function(e){ if(e.key === 'Enter') login(); });
+      try {
+        if(typeof loadAdminFields === 'function') loadAdminFields();
+      } catch(e) {
+        console.warn(e);
+      }
     });
   </script>
+
+<script>
+if ('serviceWorker' in navigator) {
+  navigator.serviceWorker.getRegistrations().then(function(registrations){
+    registrations.forEach(function(reg){
+      if (reg.active && reg.active.scriptURL && !reg.active.scriptURL.includes('service-worker.js')) return;
+    });
+  });
+}
+if (window.caches) {
+  caches.keys().then(keys => keys.filter(k => k !== 'club-rm-v29').forEach(k => caches.delete(k)));
+}
+</script>
+
 </body>
 </html>

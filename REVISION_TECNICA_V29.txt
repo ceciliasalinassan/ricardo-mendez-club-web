@@ -1,0 +1,9 @@
+Revisión técnica V29
+- js_syntax: OK
+- admin_page: OK
+- supabase_setup_sql: OK
+- service_worker: network-first v29
+- cache_busting: styles.css?v=29 and script.js?v=29
+- files_count: 37
+
+Nota: si el navegador cargó versiones antiguas, borrar caché o abrir en incógnito la primera vez.

@@ -1341,7 +1341,7 @@ function renderCumulative(){
 function setup(){$('standingSerieSelect')?.addEventListener('change',renderStandings); document.querySelectorAll('.serie-pill').forEach(btn=>btn.addEventListener('click',()=>{$('standingSerieSelect').value=btn.dataset.serie; document.querySelector('#posiciones')?.scrollIntoView({behavior:'smooth'}); renderStandings()}));
  $('memberRequestForm')?.addEventListener('submit',async e=>{e.preventDefault(); const d=getData(),s={name:memberName.value,rut:memberRut.value,phone:memberPhone.value,type:memberType.value}; d.requests.push(s); await onlineSave(d); const msg=`Nueva solicitud de socio Club Deportivo Ricardo Méndez:%0A%0ANombre: ${encodeURIComponent(s.name)}%0ARUT: ${encodeURIComponent(s.rut)}%0ATeléfono: ${encodeURIComponent(s.phone)}%0ATipo: ${encodeURIComponent(s.type)}`; window.open(`https://wa.me/${ADMIN_WHATSAPP}?text=${msg}`,'_blank'); e.target.reset(); renderRequests()});
  const openModal=()=>{ const m=$('adminModal'); if(m) m.classList.add('show'); }; $('openAdmin')?.addEventListener('click',openModal); $('openAdminTop')?.addEventListener('click',openModal); $('closeAdmin')?.addEventListener('click',()=>{ const m=$('adminModal'); if(m) m.classList.remove('show'); });
- $('loginBtn')?.addEventListener('click',async()=>{if(adminPassword.value!==ADMIN_PASS)return alert('Clave incorrecta'); loginPanel.classList.add('hidden'); adminPanel.classList.remove('hidden'); loadAdminFields()});
+ $('loginBtn')?.addEventListener('click',async()=>{loginPanel?.classList.add('hidden'); adminPanel?.classList.remove('hidden'); loadAdminFields()});
  document.querySelectorAll('.tab').forEach(btn=>btn.addEventListener('click',()=>{document.querySelectorAll('.tab').forEach(x=>x.classList.remove('active')); document.querySelectorAll('.tab-content').forEach(x=>x.classList.add('hidden')); btn.classList.add('active'); $(btn.dataset.tab)?.classList.remove('hidden'); renderAdminLists(getData()); renderRequests()}));
  $('saveGeneral')?.addEventListener('click',async()=>{const d=getData(); d.clubName=editClubName.value; d.mainTitle=editMainTitle.value; d.subtitle=editSubtitle.value; d.description=editDescription.value; d.anniversary=anniversaryInput.value; d.whatsapp=whatsappInput.value||ADMIN_WHATSAPP; d.instagram=instagramInput.value; d.facebook=facebookInput.value; d.metrics={series:metricSeriesInput.value||'11',socios:metricSociosInput.value||'246',years:metricYearsInput.value||'94',titles:metricTitlesInput.value||'0',sponsors:metricSponsorsInput.value||String(d.sponsors.length),anniversary:metricAnniversaryInput.value||'12/08'}; await onlineSave(d); render(); alert('Información general actualizada.')});
  $('saveMatch')?.addEventListener('click',async()=>{const d=getData(); let logo=matchLogoUrl.value; if(matchLogoFile.files[0])logo=await imageFileToTransparentDataURL(matchLogoFile.files[0]); d.nextMatch={rival:matchRival.value,logo,serie:matchSerie.value,date:matchDate.value,hour:matchHour.value,place:matchPlace.value}; await onlineSave(d); render(); alert('Próximo partido actualizado.')});
@@ -1354,43 +1354,64 @@ function setup(){$('standingSerieSelect')?.addEventListener('change',renderStand
   d.historyPhoto=photo||'';
   await onlineSave(d); render(); alert('Historia actualizada.');
 });
- $('addDirectiva')?.addEventListener('click',async()=>{const d=getData(); d.directiva.push({role:dirRole.value,name:dirName.value}); saveData(d); dirRole.value=dirName.value=''; render()});
+ $('addDirectiva')?.addEventListener('click',async()=>{const d=getData(); d.directiva.push({role:dirRole.value,name:dirName.value}); await onlineSave(d); dirRole.value=dirName.value=''; render()});
  $('addPresidentGallery')?.addEventListener('click',async()=>{
   const d=getData();
   let image=presidentGalleryUrl.value;
   if(presidentGalleryFile.files[0]) image=await uploadAsset(presidentGalleryFile.files[0], 'presidents');
   if(!presidentGalleryName.value||!image) return alert('Agrega nombre y fotografía.');
   d.presidents.push({name:presidentGalleryName.value,period:presidentGalleryPeriod.value,image});
-  saveData(d);
+  await onlineSave(d);
   presidentGalleryName.value=presidentGalleryPeriod.value=presidentGalleryUrl.value='';
   presidentGalleryFile.value='';
   render();
 });
- $('addPalmares')?.addEventListener('click',async()=>{const d=getData(); d.palmares.push({year:palYear.value,title:palTitle.value}); d.metrics.titles=String(d.palmares.length); saveData(d); palYear.value=palTitle.value=''; render()});
- $('addTimeline')?.addEventListener('click',async()=>{const d=getData(); d.timeline.push({year:timeYear.value,text:timeText.value}); saveData(d); timeYear.value=timeText.value=''; render()});
- $('addResult')?.addEventListener('click',async()=>{const d=getData(); d.results.unshift({date:resDate.value,match:resMatch.value,score:resScore.value,scorers:resScorers.value}); saveData(d); resDate.value=resMatch.value=resScore.value=resScorers.value=''; render()});
- $('addNews')?.addEventListener('click',async()=>{if(!newsTitle.value||!newsText.value)return alert('Completa los datos.'); const d=getData(); let image=newsImageUrl.value; if(newsImageFile.files[0])image=await uploadAsset(newsImageFile.files[0], 'news'); d.news.unshift({title:newsTitle.value,text:newsText.value,date:new Date().toLocaleDateString('es-CL'),image}); saveData(d); newsTitle.value=newsText.value=newsImageUrl.value=''; newsImageFile.value=''; render()});
- $('addMedia')?.addEventListener('click',async()=>{if(!mediaTitle.value)return alert('Agrega título.'); let url=mediaUrl.value,type=mediaType.value; if(mediaFile.files[0]){url=await uploadAsset(mediaFile.files[0], 'gallery'); type=mediaFile.files[0].type.startsWith('video')?'Video':'Foto'} if(!url)return alert('Adjunta archivo o pega URL.'); const d=getData(); d.media.unshift({title:mediaTitle.value,type,url}); saveData(d); mediaTitle.value=mediaUrl.value=''; mediaFile.value=''; render()});
+ $('addPalmares')?.addEventListener('click',async()=>{const d=getData(); d.palmares.push({year:palYear.value,title:palTitle.value}); d.metrics.titles=String(d.palmares.length); await onlineSave(d); palYear.value=palTitle.value=''; render()});
+ $('addTimeline')?.addEventListener('click',async()=>{const d=getData(); d.timeline.push({year:timeYear.value,text:timeText.value}); await onlineSave(d); timeYear.value=timeText.value=''; render()});
+ $('addResult')?.addEventListener('click',async()=>{const d=getData(); d.results.unshift({date:resDate.value,match:resMatch.value,score:resScore.value,scorers:resScorers.value}); await onlineSave(d); resDate.value=resMatch.value=resScore.value=resScorers.value=''; render()});
+ $('addNews')?.addEventListener('click',async()=>{if(!newsTitle.value||!newsText.value)return alert('Completa los datos.'); const d=getData(); let image=newsImageUrl.value; if(newsImageFile.files[0])image=await uploadAsset(newsImageFile.files[0], 'news'); d.news.unshift({title:newsTitle.value,text:newsText.value,date:new Date().toLocaleDateString('es-CL'),image}); await onlineSave(d); newsTitle.value=newsText.value=newsImageUrl.value=''; newsImageFile.value=''; render()});
+ $('addMedia')?.addEventListener('click',async()=>{if(!mediaTitle.value)return alert('Agrega título.'); let url=mediaUrl.value,type=mediaType.value; if(mediaFile.files[0]){url=await uploadAsset(mediaFile.files[0], 'gallery'); type=mediaFile.files[0].type.startsWith('video')?'Video':'Foto'} if(!url)return alert('Adjunta archivo o pega URL.'); const d=getData(); d.media.unshift({title:mediaTitle.value,type,url}); await onlineSave(d); mediaTitle.value=mediaUrl.value=''; mediaFile.value=''; render()});
  $('addFixtureImage')?.addEventListener('click',async()=>{
   const d=getData();
   let image=fixtureImageUrl.value;
   if(fixtureImageFile.files[0]) image=await uploadAsset(fixtureImageFile.files[0], 'fixture');
   if(!fixtureImageTitle.value||!image) return alert('Agrega título e imagen del fixture.');
   d.fixtureImages.unshift({title:fixtureImageTitle.value,image});
-  saveData(d);
+  await onlineSave(d);
   fixtureImageTitle.value=fixtureImageUrl.value='';
   fixtureImageFile.value='';
   render();
 });
- $('addPosition')?.addEventListener('click',async()=>{const d=getData(); if(!d.standings[posSerie.value])d.standings[posSerie.value]=[]; d.standings[posSerie.value].push({team:posTeam.value,pj:posPJ.value||0,pg:posPG.value||0,pe:posPE.value||0,pp:posPP.value||0,dg:posDG.value||'0',pts:posPTS.value||0}); saveData(d); [posTeam,posPJ,posPG,posPE,posPP,posDG,posPTS].forEach(i=>i.value=''); standingSerieSelect.value=posSerie.value; render()});
- $('importCsv')?.addEventListener('click',async()=>{if(!positionsCsv.files[0])return alert('Adjunta CSV.'); const text=await positionsCsv.files[0].text(),d=getData(); text.split(/\r?\n/).slice(1).forEach(line=>{if(!line.trim())return; const [serie,equipo,pj,pg,pe,pp,dg,pts]=line.split(',').map(x=>x?.trim()); if(!serie||!equipo)return; if(!d.standings[serie])d.standings[serie]=[]; d.standings[serie].push({team:equipo,pj:pj||0,pg:pg||0,pe:pe||0,pp:pp||0,dg:dg||'0',pts:pts||0})}); saveData(d); render()});
+ $('addPosition')?.addEventListener('click',async()=>{const d=getData(); if(!d.standings[posSerie.value])d.standings[posSerie.value]=[]; d.standings[posSerie.value].push({team:posTeam.value,pj:posPJ.value||0,pg:posPG.value||0,pe:posPE.value||0,pp:posPP.value||0,gf:0,gc:0,dg:posDG.value||'0',pts:posPTS.value||0}); await onlineSave(d); [posTeam,posPJ,posPG,posPE,posPP,posDG,posPTS].forEach(i=>i.value=''); standingSerieSelect.value=posSerie.value; render()});
+ $('importCsv')?.addEventListener('click',async()=>{if(!positionsCsv.files[0])return alert('Adjunta CSV.'); const text=await positionsCsv.files[0].text(),d=getData(); text.split(/\r?\n/).slice(1).forEach(line=>{if(!line.trim())return; const [serie,equipo,pj,pg,pe,pp,dg,pts]=line.split(',').map(x=>x?.trim()); if(!serie||!equipo)return; if(!d.standings[serie])d.standings[serie]=[]; d.standings[serie].push({team:equipo,pj:pj||0,pg:pg||0,pe:pe||0,pp:pp||0,gf:0,gc:0,dg:dg||'0',pts:pts||0})}); await onlineSave(d); render()});
  $('downloadTemplateAdmin')?.addEventListener('click',async()=>{const csv='serie,equipo,pj,pg,pe,pp,dg,pts\nSERIE HONOR,Ricardo Méndez,10,7,2,1,+15,23\n'; const blob=new Blob([csv],{type:'text/csv'}),a=document.createElement('a'); a.href=URL.createObjectURL(blob); a.download='plantilla_puntajes.csv'; a.click()});
- $('addSponsor')?.addEventListener('click',async()=>{const d=getData(); let url=sponsorUrl.value; if(sponsorFile.files[0])url=await imageFileToTransparentDataURL(sponsorFile.files[0]); if(!sponsorName.value||!url)return alert('Agrega nombre e imagen/URL.'); d.sponsors.push({name:sponsorName.value,url}); d.metrics.sponsors=String(d.sponsors.length); saveData(d); sponsorName.value=sponsorUrl.value=''; sponsorFile.value=''; render()});
+ $('addSponsor')?.addEventListener('click',async()=>{const d=getData(); let url=sponsorUrl.value; if(sponsorFile.files[0])url=await imageFileToTransparentDataURL(sponsorFile.files[0]); if(!sponsorName.value||!url)return alert('Agrega nombre e imagen/URL.'); d.sponsors.push({name:sponsorName.value,url}); d.metrics.sponsors=String(d.sponsors.length); await onlineSave(d); sponsorName.value=sponsorUrl.value=''; sponsorFile.value=''; render()});
  
  $('saveSupabaseConfig')?.addEventListener('click',async()=>{
-   setSupabaseConfig(supabaseUrlInput.value.trim(), supabaseAnonInput.value.trim());
+   const url = supabaseUrlInput.value.trim();
+   const key = supabaseAnonInput.value.trim();
+
+   if(!url.startsWith('https://') || !url.includes('.supabase.co')){
+     supabaseStatus.textContent = 'Estado: error. El primer campo debe ser Project URL, no una API key.';
+     alert('El primer campo debe ser Project URL. Ejemplo: https://xzcbdyabzgwfoylipgco.supabase.co');
+     return;
+   }
+
+   if(key.startsWith('sb_secret_') || key.includes('secret')){
+     supabaseStatus.textContent = 'Estado: error. No uses Secret Key en la web.';
+     alert('Pegaste una Secret Key. Esa clave no debe ir en la web. Usa solamente Publishable Key / anon public key.');
+     return;
+   }
+
+   if(!key.startsWith('sb_publishable_') && !key.startsWith('eyJ')){
+     supabaseStatus.textContent = 'Estado: error. La clave pública parece incorrecta.';
+     alert('El segundo campo debe ser Publishable Key / anon public key.');
+     return;
+   }
+
+   setSupabaseConfig(url, key);
    const ok = await testSupabase();
-   supabaseStatus.textContent = ok ? 'Estado: conectado a Supabase.' : 'Estado: error de conexión. Revisa URL, anon key y tablas.';
+   supabaseStatus.textContent = ok ? 'Estado: conectado a Supabase.' : 'Estado: error de conexión. Revisa URL, publishable key, tablas y RLS.';
    if(ok) alert('Supabase conectado correctamente.');
  });
  $('syncToSupabase')?.addEventListener('click',async()=>{

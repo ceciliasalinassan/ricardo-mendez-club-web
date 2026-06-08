@@ -1,16 +1,10 @@
-# Club Deportivo Ricardo Méndez V27
+# Club Deportivo Ricardo Méndez V30
 
-Cambio clave:
-- El Administrador ahora está en una página separada: `admin.html`.
-- Ya no depende de abrir un modal.
-- En la web pública el botón Admin lleva directamente a `admin.html`.
-- Clave demo: admin1932.
-- Se mantiene Supabase, fixture por imágenes, tablas oficiales, presidentes, historia con foto y auspiciadores.
+Cambio:
+- El administrador ya no solicita clave.
+- Al abrir `admin.html`, entra directo al panel administrador.
+- Se mantiene Supabase, fixture por imágenes, tablas oficiales, presidentes, historia con foto y limpieza de caché.
 
-Recomendación:
-- Crear un repositorio nuevo en GitHub.
-- Subir TODOS los archivos de este ZIP descomprimidos en la raíz.
-- En Vercel importar el repositorio nuevo.
-- Abrir:
-  - index.html = web pública
-  - admin.html = panel administrador
+Importante:
+- Como no hay clave, no publiques el enlace del admin a personas no autorizadas.
+- URL del admin: /admin.html

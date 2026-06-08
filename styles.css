@@ -1224,3 +1224,33 @@ img[alt]{
 .admin-page #loginPanel.hidden{
   display:none!important;
 }
+
+/* V28 Supabase labels */
+.admin-label{
+  display:block;
+  margin:14px 0 6px;
+  color:#ffe797;
+  font-weight:900;
+  text-transform:uppercase;
+  letter-spacing:.6px;
+}
+
+/* V29: correcciones finales de estabilidad */
+.admin-page-wrap,
+.admin-page-wrap .modal-box{
+  pointer-events:auto!important;
+}
+.admin-page input,
+.admin-page textarea,
+.admin-page select,
+.admin-page button{
+  pointer-events:auto!important;
+}
+
+/* V30: Admin sin clave */
+.admin-body #loginPanel{
+  display:none!important;
+}
+.admin-body #adminPanel{
+  display:block!important;
+}

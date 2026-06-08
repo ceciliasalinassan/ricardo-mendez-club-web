@@ -6,7 +6,7 @@
   <title>Club Deportivo Ricardo Méndez</title>
   <link rel="manifest" href="manifest.json" />
   <meta name="theme-color" content="#020307" />
-  <link rel="stylesheet" href="styles.css" />
+  <link rel="stylesheet" href="styles.css?v=29" />
 </head>
 <body>
   <div class="real-stadium-bg"></div>
@@ -237,8 +237,22 @@
   </main>
 
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-  <script src="script.js"></script>
+  <script src="script.js?v=29"></script>
   <script>if ('serviceWorker' in navigator) navigator.serviceWorker.register('./service-worker.js');</script>
+
+
+<script>
+if ('serviceWorker' in navigator) {
+  navigator.serviceWorker.getRegistrations().then(function(registrations){
+    registrations.forEach(function(reg){
+      if (reg.active && reg.active.scriptURL && !reg.active.scriptURL.includes('service-worker.js')) return;
+    });
+  });
+}
+if (window.caches) {
+  caches.keys().then(keys => keys.filter(k => k !== 'club-rm-v29').forEach(k => caches.delete(k)));
+}
+</script>
 
 </body>
 </html>
